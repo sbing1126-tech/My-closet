@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="apple-touch-icon" href="data:image/png;base64,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"><link rel="icon" type="image/png" href="data:image/png;base64,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"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="내 옷장"><meta name="theme-color" content="#2f4a6d">
+<title>내 옷장 · 바지</title>
+<style>
+:root{--bg:#faf8f5;--card:#fff;--tx:#222;--sub:#777;--ac:#2f4a6d;--ln:#e5e0d8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#17181a;--card:#222426;--tx:#eee;--sub:#999;--ac:#8fb0dd;--ln:#34363a}}
+:root[data-theme="dark"]{--bg:#17181a;--card:#222426;--tx:#eee;--sub:#999;--ac:#8fb0dd;--ln:#34363a}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 -apple-system,"Apple SD Gothic Neo","Noto Sans KR",sans-serif;padding:14px}
+h1{font-size:20px;margin:4px 0 10px}
+h2{font-size:15px;margin:18px 0 8px;color:var(--ac)}
+h2 small{color:var(--sub);font-weight:400}
+button,select,input,textarea{font:inherit;color:var(--tx)}
+.btn{background:var(--ac);color:var(--bg);border:0;border-radius:10px;padding:9px 14px;font-weight:600}
+.btn.g{background:transparent;color:var(--ac);border:1px solid var(--ln)}
+.btn.r{background:transparent;color:#d33;border:1px solid var(--ln)}
+.bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:8px 0}
+.chip{white-space:nowrap;border:1px solid var(--ln);background:var(--card);border-radius:99px;padding:5px 12px}
+.chip.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.it{background:var(--card);border:1px solid var(--ln);border-radius:10px;overflow:hidden;text-align:center;cursor:pointer}
+.it .im{aspect-ratio:3/4;background:var(--ln);display:flex;align-items:center;justify-content:center;color:var(--sub)}
+.it img{width:100%;height:100%;object-fit:contain;display:block}
+.it b{display:block;padding:5px 2px 0;font-size:14px;letter-spacing:.5px}
+.it span{display:block;padding:0 2px 6px;font-size:11px;color:var(--sub)}
+.mod{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:flex-end;justify-content:center;z-index:9}
+.mod.on{display:flex}
+.sheet{background:var(--bg);width:100%;max-width:560px;max-height:92%;overflow:auto;border-radius:16px 16px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.two{align-items:start}.two>img{width:100%;height:auto;border-radius:10px;display:block}.slot{width:100%;aspect-ratio:3/4;border-radius:10px;background:var(--ln)}
+.slot{display:flex;align-items:center;justify-content:center;color:var(--sub);text-align:center;cursor:pointer;overflow:hidden;font-size:13px}
+.slot img{width:100%;height:100%;object-fit:contain}
+label{display:block;font-size:12px;color:var(--sub);margin:10px 0 3px}
+select,input[type=text],textarea{width:100%;padding:9px;border:1px solid var(--ln);border-radius:8px;background:var(--card)}
+textarea{min-height:80px}
+.code{font-size:26px;font-weight:800;color:var(--ac);margin:6px 0 0}
+.kv{margin:8px 0;white-space:pre-wrap}
+canvas{width:100%;touch-action:none;border-radius:8px;display:block}
+.leg{font-size:12px;color:var(--sub);margin-top:22px;line-height:1.7}
+.rate{display:flex;gap:6px}.rate button{flex:1;padding:10px 0;border:1px solid var(--ln);border-radius:8px;background:var(--card)}.rate button.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}.rl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:3px}
+</style></head><body>
+<h1>👖 내 옷장 · 바지 <small id="cnt" style="font-size:13px;color:var(--sub)"></small></h1>
+<div class="bar"><button class="btn" id="add">+ 바지 추가</button><button class="btn g" id="exp">백업</button><button class="btn g" id="imp">복원</button><input type="file" id="impf" accept=".json" hidden></div>
+<div class="chips" id="chips"></div>
+<div id="list"></div>
+<div class="leg">라벨 규칙: 색 <b>L</b>연청 · <b>M</b>중청 · <b>D</b>진청 · <b>K</b>흑/먹색 + 핏 <b>W</b>와이드 · <b>SW</b>세미와이드 · <b>S</b>일자 · <b>B</b>부츠컷 · <b>T</b>테이퍼드 + 번호.<br>예) DW01 = 진청 와이드 1번. 이 코드를 바지 안쪽 택에 써 두세요.<br>※ 데이터는 이 브라우저에만 저장돼요. 가끔 '백업'을 눌러 파일로 보관하세요.</div>
+
+<div class="mod" id="m1"><div class="sheet" id="s1"></div></div>
+<div class="mod" id="m2"><div class="sheet" id="s2"></div></div>
+<div class="mod" id="m3"><div class="sheet" id="s3"></div></div>
+<input type="file" id="pick" accept="image/*" hidden>
+
+<script>
+const COLORS={'연청':'L','중청':'M','진청':'D','흑/먹색':'K','기타':'E'};
+const FITS={'와이드':'W','세미와이드':'SW','일자':'S','부츠컷':'B','테이퍼드':'T','기타':'E'};
+const THICK=['얇음','중간','두꺼움'],LEN=['짧음','적당','김'],WAIST=['하이','미드','로우'],FEEL=['편함','딱 맞음','헐렁함','꽉 낌','불편함'];
+let db,items=[],flt='전체';
+const $=id=>document.getElementById(id);
+function open(){return new Promise(r=>{try{const q=indexedDB.open('closet',1);q.onupgradeneeded=()=>q.result.createObjectStore('p',{keyPath:'id'});q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}})}
+function loadAll(){return new Promise(r=>{if(!db)return r([]);try{const q=db.transaction('p').objectStore('p').getAll();q.onsuccess=()=>r(q.result);q.onerror=()=>r([])}catch(e){r([])}})}
+function put(o){try{db&&db.transaction('p','readwrite').objectStore('p').put(o)}catch(e){}}
+function rm(id){try{db&&db.transaction('p','readwrite').objectStore('p').delete(id)}catch(e){}}
+function nextCode(c,f,skip){const p=COLORS[c]+FITS[f];let n=1;const used=items.filter(i=>i.id!==skip&&i.code.replace(/\d+$/,'')===p).map(i=>+i.code.match(/\d+$/)[0]);while(used.includes(n))n++;return p+String(n).padStart(2,'0')}
+function render(){
+ $('cnt').textContent=items.length+'벌';
+ const cs=['전체',...Object.keys(COLORS).filter(c=>items.some(i=>i.color===c))];
+ $('chips').innerHTML=cs.map(c=>`<button class="chip ${c===flt?'on':''}" data-c="${c}">${c}</button>`).join('');
+ let h='';
+ for(const c of Object.keys(COLORS)){
+  if(flt!=='전체'&&flt!==c)continue;
+  const g=items.filter(i=>i.color===c).sort((a,b)=>a.code.localeCompare(b.code));
+  if(!g.length)continue;
+  h+=`<h2>${c} <small>${g.length}벌</small></h2><div class="grid">`+g.map(i=>`<div class="it" data-id="${i.id}"><div class="im">${i.front?`<img src="${i.front}">`:'사진 없음'}</div><b>${i.code}</b><span>${i.fit} · ${i.name||''}</span></div>`).join('')+'</div>';
+ }
+ $('list').innerHTML=h||'<p style="color:var(--sub);margin-top:30px;text-align:center">아직 비어 있어요.<br>“+ 바지 추가”로 시작하세요.</p>';
+}
+$('chips').onclick=e=>{const c=e.target.dataset.c;if(c){flt=c;render()}};
+$('list').onclick=e=>{const el=e.target.closest('.it');if(el)detail(el.dataset.id)};
+const show=(m,h)=>{if(h!=null)$(('s'+m.slice(1))).innerHTML=h;$(m).classList.add('on')},hide=m=>$(m).classList.remove('on');
+
+function detail(id){
+ const i=items.find(x=>x.id===id);
+ show('m1',`<div class="two">${['front','side'].map(k=>i[k]?`<img src="${i[k]}">`:'<div class="slot">없음</div>').join('')}</div>
+ <div class="code">${i.code}</div><div style="color:var(--sub)">${i.color} ${i.fit}${i.name?' · '+i.name:''}</div>
+ <div class="kv">${i.waist||'허리 미입력'}웨이스트 · 착용감: ${typeof i.feel==='number'?'●'.repeat(i.feel)+'○'.repeat(5-i.feel)+' ('+i.feel+'/5)':'미입력'}
+핏 예쁨: ${typeof i.look==='number'?'★'.repeat(i.look)+'☆'.repeat(5-i.look)+' ('+i.look+'/5)':'미입력'}
+두께감: ${i.thick} · 기장: ${i.len}</div><div class="kv">${(i.memo||'').replace(/</g,'&lt;')}</div>
+ <div class="bar" style="margin-top:12px"><button class="btn" id="ed">수정</button><button class="btn r" id="dl">삭제</button><button class="btn g" id="cl" style="margin-left:auto">닫기</button></div>`);
+ $('cl').onclick=()=>hide('m1');$('ed').onclick=()=>{hide('m1');form(i)};
+ $('dl').onclick=()=>{if(confirm(i.code+' 삭제할까요?')){items=items.filter(x=>x.id!==id);rm(id);hide('m1');render()}};
+}
+const opt=(o,v)=>Object.keys(o).length?'':'';
+function sel(id,arr,v){return `<select id="${id}">${arr.map(a=>`<option ${a===v?'selected':''}>${a}</option>`).join('')}</select>`}
+function form(old){
+ const d={id:'p'+Date.now(),color:'진청',fit:'와이드',thick:'중간',len:'적당',waist:'하이',feel:'편함',name:'',memo:'',front:'',side:'',...(old||{})};if(typeof d.feel!=='number')d.feel=3;if(typeof d.look!=='number')d.look=3;
+ show('m1',`<div class="two">${['front','side'].map(k=>`<div><div class="slot" data-k="${k}">${d[k]?`<img src="${d[k]}">`:'📷 '+(k==='front'?'앞':'옆')+' 사진<br>(눌러서 선택)'}</div></div>`).join('')}</div>
+ <label>이름/브랜드 (예: 유니클로)</label><input type="text" id="f_name" value="${(d.name||'').replace(/"/g,'&quot;')}">
+ <div class="two"><div><label>색</label>${sel('f_color',Object.keys(COLORS),d.color)}</div><div><label>핏</label>${sel('f_fit',Object.keys(FITS),d.fit)}</div>
+ <div><label>두께감</label>${sel('f_thick',THICK,d.thick)}</div><div><label>기장</label>${sel('f_len',LEN,d.len)}</div><div><label>허리</label>${sel('f_waist',WAIST,d.waist)}</div></div><label>착용감</label><div class="rate" id="f_feel">${[1,2,3,4,5].map(n=>`<button data-v="${n}" class="${n===d.feel?'on':''}">${n}</button>`).join('')}</div><div class="rl"><span>불편함</span><span>편함</span></div><label>핏 (예쁜 정도)</label><div class="rate" id="f_look">${[1,2,3,4,5].map(n=>`<button data-v="${n}" class="${n===d.look?'on':''}">${n}</button>`).join('')}</div><div class="rl"><span>별로</span><span>예쁨</span></div>
+ <label>메모 (배/골반 핏, 장단점 등 — 메모앱에서 붙여넣기)</label><textarea id="f_memo">${(d.memo||'').replace(/</g,'&lt;')}</textarea>
+ <div class="bar" style="margin-top:12px"><button class="btn" id="sv">저장</button><button class="btn g" id="cl">취소</button></div>`);
+ document.querySelectorAll('#s1 .slot').forEach(s=>s.onclick=()=>{
+  $('pick').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)cropper(f,url=>{d[s.dataset.k]=url;s.innerHTML=`<img src="${url}">`})};$('pick').click()});
+ $('f_look').onclick=e=>{const v=+e.target.dataset.v;if(v){d.look=v;[...$('f_look').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}};
+ $('f_feel').onclick=e=>{const v=+e.target.dataset.v;if(v){d.feel=v;[...$('f_feel').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}};
+ $('cl').onclick=()=>hide('m1');
+ $('sv').onclick=()=>{
+  d.name=$('f_name').value.trim();d.color=$('f_color').value;d.fit=$('f_fit').value;d.thick=$('f_thick').value;d.len=$('f_len').value;d.waist=$('f_waist').value;d.memo=$('f_memo').value;
+  if(!old||old.color!==d.color||old.fit!==d.fit)d.code=nextCode(d.color,d.fit,d.id);
+  const ix=items.findIndex(x=>x.id===d.id);ix>=0?items[ix]=d:items.push(d);put(d);hide('m1');render();
+ };
+}
+$('add').onclick=()=>form();
+
+function cropper(file,done){
+ const im=new Image();im.onload=()=>{
+  const W=Math.min(innerWidth-32,520),sc=W/im.width,H=im.height*sc;
+  show('m2',`<div style="font-size:13px;color:var(--sub);margin-bottom:6px">남길 영역을 드래그하세요 (얼굴은 빼고!)</div><canvas id="cv"></canvas>
+  <div class="bar" style="margin-top:10px"><button class="btn" id="ok">자르기 완료</button><button class="btn g" id="full">전체 사용</button><button class="btn g" id="no">취소</button></div>`);
+  const cv=$('cv');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  let r={x:0,y:0,w:W,h:H},st=null;
+  function draw(){x.drawImage(im,0,0,W,H);x.fillStyle='rgba(0,0,0,.55)';x.fillRect(0,0,W,r.y);x.fillRect(0,r.y+r.h,W,H);x.fillRect(0,r.y,r.x,r.h);x.fillRect(r.x+r.w,r.y,W,r.h);x.strokeStyle='#fff';x.lineWidth=2;x.strokeRect(r.x,r.y,r.w,r.h)}
+  const pt=e=>{const b=cv.getBoundingClientRect();return{x:Math.max(0,Math.min(W,(e.clientX-b.left)*W/b.width)),y:Math.max(0,Math.min(H,(e.clientY-b.top)*H/b.height))}};
+  cv.onpointerdown=e=>{st=pt(e);cv.setPointerCapture(e.pointerId)};
+  cv.onpointermove=e=>{if(!st)return;const p=pt(e);r={x:Math.min(st.x,p.x),y:Math.min(st.y,p.y),w:Math.abs(p.x-st.x),h:Math.abs(p.y-st.y)};draw()};
+  cv.onpointerup=()=>{st=null};
+  draw();
+  function out(rr){const k=Math.min(1,900/Math.max(rr.w,rr.h)*sc*0+900/Math.max(rr.w/sc,rr.h/sc));const sw=rr.w/sc,sh=rr.h/sc,o=document.createElement('canvas');const kk=Math.min(1,900/Math.max(sw,sh));o.width=sw*kk;o.height=sh*kk;o.getContext('2d').drawImage(im,rr.x/sc,rr.y/sc,sw,sh,0,0,o.width,o.height);done(o.toDataURL('image/jpeg',.85));hide('m2')}
+  $('ok').onclick=()=>r.w>20&&r.h>20?out(r):out({x:0,y:0,w:W,h:H});
+  $('full').onclick=()=>out({x:0,y:0,w:W,h:H});
+  $('no').onclick=()=>hide('m2');
+ };im.src=URL.createObjectURL(file);
+}
+$('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(items)],{type:'application/json'}));a.download='closet-backup.json';a.click()};
+$('imp').onclick=()=>$('impf').click();
+$('impf').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const a=JSON.parse(await f.text());a.forEach(o=>{const ix=items.findIndex(x=>x.id===o.id);ix>=0?items[ix]=o:items.push(o);put(o)});render()}catch(err){alert('파일을 읽지 못했어요')}};
+['m1','m3'].forEach(m=>$(m).onclick=e=>{if(e.target.id===m&&m==='m3')hide(m)});
+open().then(loadAll).then(a=>{items=a;render()});
+</script></body></html>
