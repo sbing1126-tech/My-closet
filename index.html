@@ -42,79 +42,120 @@ textarea{min-height:80px}
 canvas{width:100%;touch-action:none;border-radius:8px;display:block}
 .leg{font-size:12px;color:var(--sub);margin-top:22px;line-height:1.7}
 .rate{display:flex;gap:6px}.rate button{flex:1;padding:10px 0;border:1px solid var(--ln);border-radius:8px;background:var(--card)}.rate button.on{background:var(--ac);color:var(--bg);border-color:var(--ac)}.rl{display:flex;justify-content:space-between;font-size:11px;color:var(--sub);margin-top:3px}
+[hidden]{display:none!important}.tabs{display:flex;gap:6px;margin:4px 0 8px}.tabs .chip{flex:1;text-align:center}.fp{background:var(--card);border:1px solid var(--ln);border-radius:10px;padding:10px;margin-top:8px}
 </style></head><body>
-<h1>👖 내 옷장 · 바지 <small id="cnt" style="font-size:13px;color:var(--sub)"></small></h1>
-<div class="bar"><button class="btn" id="add">+ 바지 추가</button><button class="btn g" id="exp">백업</button><button class="btn g" id="imp">복원</button><input type="file" id="impf" accept=".json" hidden></div>
+<h1>🗄️ 내 옷장 <small id="cnt" style="font-size:13px;color:var(--sub)"></small></h1>
+<div class="tabs" id="tabs"></div>
+<div class="bar"><button class="btn" id="add">+ 추가</button><button class="btn g" id="grp">보기: 색상별</button><button class="btn g" id="fb">필터/정렬</button><button class="btn g" id="exp">백업</button><button class="btn g" id="imp">복원</button><input type="file" id="impf" accept=".json" hidden></div>
+<div class="fp" id="fp" hidden>
+<input type="text" id="fq" placeholder="검색 (코드·이름·메모)">
+<div class="two"><div><label>허리</label><select id="fw"></select></div><div><label>핏 예쁨</label><select id="fl"></select></div><div><label>착용감</label><select id="ff"></select></div><div><label>수납</label><select id="fs"></select></div><div><label>계절</label><select id="fse"></select></div><div><label>정렬</label><select id="fso"></select></div></div>
+<button class="btn g" id="fr" style="margin-top:10px">초기화</button></div>
 <div class="chips" id="chips"></div>
 <div id="list"></div>
-<div class="leg">라벨 규칙: 색 <b>L</b>연청 · <b>M</b>중청 · <b>D</b>진청 · <b>K</b>흑/먹색 + 핏 <b>W</b>와이드 · <b>SW</b>세미와이드 · <b>S</b>일자 · <b>B</b>부츠컷 · <b>T</b>테이퍼드 + 번호.<br>예) DW01 = 진청 와이드 1번. 이 코드를 바지 안쪽 택에 써 두세요.<br>※ 데이터는 이 브라우저에만 저장돼요. 가끔 '백업'을 눌러 파일로 보관하세요.</div>
-
+<div class="leg" id="leg"></div>
 <div class="mod" id="m1"><div class="sheet" id="s1"></div></div>
 <div class="mod" id="m2"><div class="sheet" id="s2"></div></div>
-<div class="mod" id="m3"><div class="sheet" id="s3"></div></div>
 <input type="file" id="pick" accept="image/*" hidden>
-
 <script>
-const COLORS={'연청':'L','중청':'M','진청':'D','흑/먹색':'K','기타':'E'};
-const FITS={'와이드':'W','세미와이드':'SW','일자':'S','부츠컷':'B','테이퍼드':'T','기타':'E'};
-const THICK=['얇음','중간','두꺼움'],LEN=['짧음','적당','김'],WAIST=['하이','미드','로우'],FEEL=['편함','딱 맞음','헐렁함','꽉 낌','불편함'];
-let db,items=[],flt='전체';
-const $=id=>document.getElementById(id);
+const CK={'화이트':'W','블랙':'K','그레이':'G','베이지':'B','네이비':'N','기타':'E'};
+const CATS={
+ pants:{n:'바지',pre:'',colors:{'연청':'L','중청':'M','진청':'D','흑/먹색':'K','기타':'E'},fits:{'와이드':'W','세미와이드':'SW','일자':'S','부츠컷':'B','테이퍼드':'T','스키니':'SK','기타':'E'},ex:'DW01 = 진청 와이드 1번'},
+ top:{n:'상의',pre:'T',colors:CK,fits:{'티셔츠':'TS','셔츠':'SH','니트':'KN','맨투맨':'MT','후디':'HD','기타':'E'},ex:'TWTS01 = 상의 화이트 티셔츠 1번'},
+ outer:{n:'아우터',pre:'O',colors:CK,fits:{'자켓':'JK','코트':'CT','패딩':'PD','가디건':'CD','점퍼':'JP','기타':'E'},ex:'OKJK01 = 아우터 블랙 자켓 1번'}
+};
+const THICK=['얇음','중간','두꺼움'],LEN=['짧음','적당','김'],WAIST=['하이','미드','로우'],SIZES=['-','작음','잘맞음','큼'],STORE=['접기','걸기'],SEAS=['봄가을','여름','겨울'];
+let db,items=[],flt='전체',grp='color',cat='pants',F={},so='code';
+const $=id=>document.getElementById(id),C=()=>CATS[cat],M=()=>grp==='color'?C().colors:C().fits;
+const ct=i=>i.cat||'pants',lw=i=>(i.wears||[]).slice(-1)[0]||'';
 function open(){return new Promise(r=>{try{const q=indexedDB.open('closet',1);q.onupgradeneeded=()=>q.result.createObjectStore('p',{keyPath:'id'});q.onsuccess=()=>{db=q.result;r()};q.onerror=()=>r()}catch(e){r()}})}
 function loadAll(){return new Promise(r=>{if(!db)return r([]);try{const q=db.transaction('p').objectStore('p').getAll();q.onsuccess=()=>r(q.result);q.onerror=()=>r([])}catch(e){r([])}})}
 function put(o){try{db&&db.transaction('p','readwrite').objectStore('p').put(o)}catch(e){}}
 function rm(id){try{db&&db.transaction('p','readwrite').objectStore('p').delete(id)}catch(e){}}
-function nextCode(c,f,skip){const p=COLORS[c]+FITS[f];let n=1;const used=items.filter(i=>i.id!==skip&&i.code.replace(/\d+$/,'')===p).map(i=>+i.code.match(/\d+$/)[0]);while(used.includes(n))n++;return p+String(n).padStart(2,'0')}
+function nextCode(k,c,f,skip){const T=CATS[k],p=T.pre+T.colors[c]+T.fits[f];let n=1;const used=items.filter(i=>i.id!==skip&&ct(i)===k&&i.code.replace(/\d+$/,'')===p).map(i=>+i.code.match(/\d+$/)[0]);while(used.includes(n))n++;return p+String(n).padStart(2,'0')}
+const pass=i=>(!F.q||(i.code+(i.name||'')+(i.memo||'')).toLowerCase().includes(F.q))&&(!F.waist||i.waist===F.waist)&&(!F.look||(i.look||0)>=F.look)&&(!F.feel||(i.feel||0)>=F.feel)&&(!F.store||i.store===F.store)&&(!F.season||(i.season||[]).includes(F.season));
+const key=(a,b)=>so==='look'?(b.look||0)-(a.look||0):so==='feel'?(b.feel||0)-(a.feel||0):so==='old'?lw(a).localeCompare(lw(b)):so==='many'?(b.wears||[]).length-(a.wears||[]).length:0;
+const cmp=(a,b)=>key(a,b)||a.code.localeCompare(b.code);
 function render(){
- $('cnt').textContent=items.length+'벌';
- const cs=['전체',...Object.keys(COLORS).filter(c=>items.some(i=>i.color===c))];
+ const all=items.filter(i=>ct(i)===cat),list=all.filter(pass),keys=Object.keys(M());
+ $('cnt').textContent=all.length+'벌'+(list.length!==all.length?` (조건 ${list.length})`:'');
+ $('tabs').innerHTML=Object.entries(CATS).map(([k,v])=>`<button class="chip ${k===cat?'on':''}" data-k="${k}">${v.n} ${items.filter(i=>ct(i)===k).length}</button>`).join('');
+ $('add').textContent='+ '+C().n+' 추가';
+ $('fw').parentElement.style.display=cat==='pants'?'':'none';
+ const cs=['전체',...keys.filter(c=>list.some(i=>i[grp]===c))];
  $('chips').innerHTML=cs.map(c=>`<button class="chip ${c===flt?'on':''}" data-c="${c}">${c}</button>`).join('');
  let h='';
- for(const c of Object.keys(COLORS)){
+ for(const c of keys){
   if(flt!=='전체'&&flt!==c)continue;
-  const g=items.filter(i=>i.color===c).sort((a,b)=>a.code.localeCompare(b.code));
+  const g=list.filter(i=>i[grp]===c).sort(cmp);
   if(!g.length)continue;
-  h+=`<h2>${c} <small>${g.length}벌</small></h2><div class="grid">`+g.map(i=>`<div class="it" data-id="${i.id}"><div class="im">${i.front?`<img src="${i.front}">`:'사진 없음'}</div><b>${i.code}</b><span>${i.fit} · ${i.name||''}</span></div>`).join('')+'</div>';
+  h+=`<h2>${c} <small>${g.length}벌</small></h2><div class="grid">`+g.map(i=>`<div class="it" data-id="${i.id}"><div class="im">${i.front?`<img src="${i.front}">`:'사진 없음'}</div><b>${i.code}</b><span>${grp==='fit'?i.color:i.fit} · ${i.name||''}${(i.wears||[]).length?' · '+i.wears.length+'회':''}</span></div>`).join('')+'</div>';
  }
- $('list').innerHTML=h||'<p style="color:var(--sub);margin-top:30px;text-align:center">아직 비어 있어요.<br>“+ 바지 추가”로 시작하세요.</p>';
+ $('list').innerHTML=h||'<p style="color:var(--sub);margin-top:30px;text-align:center">해당하는 옷이 없어요.</p>';
+ const T=C(),j=o=>Object.entries(o).map(([k,v])=>`<b>${v}</b>${k}`).join(' · ');
+ $('leg').innerHTML=`라벨 규칙: 색 ${j(T.colors)}<br>${cat==='pants'?'핏':'종류'} ${j(T.fits)} + 번호<br>예) ${T.ex}. 이 코드를 안쪽 택에 써 두세요.<br>※ 데이터는 이 브라우저에만 저장돼요. 가끔 '백업'으로 파일을 보관하세요.`;
 }
+$('tabs').onclick=e=>{const k=e.target.dataset.k;if(k){cat=k;flt='전체';render()}};
 $('chips').onclick=e=>{const c=e.target.dataset.c;if(c){flt=c;render()}};
 $('list').onclick=e=>{const el=e.target.closest('.it');if(el)detail(el.dataset.id)};
-const show=(m,h)=>{if(h!=null)$(('s'+m.slice(1))).innerHTML=h;$(m).classList.add('on')},hide=m=>$(m).classList.remove('on');
-
+const show=(m,h)=>{$('s'+m.slice(1)).innerHTML=h;$(m).classList.add('on')},hide=m=>$(m).classList.remove('on');
+const stars=(n,a,b)=>typeof n==='number'?a.repeat(n)+b.repeat(5-n)+` (${n}/5)`:'미입력';
 function detail(id){
- const i=items.find(x=>x.id===id);
+ const i=items.find(x=>x.id===id),w=i.wears||[],pants=ct(i)==='pants';
  show('m1',`<div class="two">${['front','side'].map(k=>i[k]?`<img src="${i[k]}">`:'<div class="slot">없음</div>').join('')}</div>
  <div class="code">${i.code}</div><div style="color:var(--sub)">${i.color} ${i.fit}${i.name?' · '+i.name:''}</div>
- <div class="kv">${i.waist||'허리 미입력'}웨이스트 · 착용감: ${typeof i.feel==='number'?'●'.repeat(i.feel)+'○'.repeat(5-i.feel)+' ('+i.feel+'/5)':'미입력'}
-핏 예쁨: ${typeof i.look==='number'?'★'.repeat(i.look)+'☆'.repeat(5-i.look)+' ('+i.look+'/5)':'미입력'}
-두께감: ${i.thick} · 기장: ${i.len}</div><div class="kv">${(i.memo||'').replace(/</g,'&lt;')}</div>
+ <div class="kv">${pants?(i.waist||'허리 미입력')+'웨이스트 · ':''}사이즈: ${i.size&&i.size!=='-'?i.size:'미입력'} · 수납: ${i.store||'미입력'}
+착용감: ${stars(i.feel,'●','○')}
+핏 예쁨: ${stars(i.look,'★','☆')}
+두께감: ${i.thick} · 기장: ${i.len}
+계절: ${(i.season||[]).join(', ')||'미입력'}</div><div class="kv">${(i.memo||'').replace(/</g,'&lt;')}</div>
+ <div class="kv">착용 ${w.length}회 · 마지막 ${w[w.length-1]||'기록 없음'}</div>
+ <div class="bar"><button class="btn" id="wr">✅ 오늘 입음</button><button class="btn g" id="wu">착용 취소</button></div>
  <div class="bar" style="margin-top:12px"><button class="btn" id="ed">수정</button><button class="btn r" id="dl">삭제</button><button class="btn g" id="cl" style="margin-left:auto">닫기</button></div>`);
  $('cl').onclick=()=>hide('m1');$('ed').onclick=()=>{hide('m1');form(i)};
+ $('wr').onclick=()=>{const t=new Date().toLocaleDateString('sv-SE');if(w[w.length-1]!==t)w.push(t);i.wears=w;put(i);render();detail(id)};
+ $('wu').onclick=()=>{w.pop();i.wears=w;put(i);render();detail(id)};
  $('dl').onclick=()=>{if(confirm(i.code+' 삭제할까요?')){items=items.filter(x=>x.id!==id);rm(id);hide('m1');render()}};
 }
-const opt=(o,v)=>Object.keys(o).length?'':'';
-function sel(id,arr,v){return `<select id="${id}">${arr.map(a=>`<option ${a===v?'selected':''}>${a}</option>`).join('')}</select>`}
+const sel=(id,arr,v)=>`<select id="${id}">${arr.map(a=>`<option ${a===v?'selected':''}>${a}</option>`).join('')}</select>`;
+const rate=(id,v)=>`<div class="rate" id="${id}">${[1,2,3,4,5].map(n=>`<button data-v="${n}" class="${n===v?'on':''}">${n}</button>`).join('')}</div>`;
 function form(old){
- const d={id:'p'+Date.now(),color:'진청',fit:'와이드',thick:'중간',len:'적당',waist:'하이',feel:'편함',name:'',memo:'',front:'',side:'',...(old||{})};if(typeof d.feel!=='number')d.feel=3;if(typeof d.look!=='number')d.look=3;
+ const k0=old?ct(old):cat,T=CATS[k0];
+ const d={id:'p'+Date.now(),cat:k0,color:Object.keys(T.colors)[0],fit:Object.keys(T.fits)[0],thick:'중간',len:'적당',waist:'하이',feel:3,look:3,size:'-',store:'접기',season:[],name:'',memo:'',front:'',side:'',wears:[],...(old||{})};
+ d.cat=k0;d.season=d.season||[];if(typeof d.feel!=='number')d.feel=3;if(typeof d.look!=='number')d.look=3;
  show('m1',`<div class="two">${['front','side'].map(k=>`<div><div class="slot" data-k="${k}">${d[k]?`<img src="${d[k]}">`:'📷 '+(k==='front'?'앞':'옆')+' 사진<br>(눌러서 선택)'}</div></div>`).join('')}</div>
  <label>이름/브랜드 (예: 유니클로)</label><input type="text" id="f_name" value="${(d.name||'').replace(/"/g,'&quot;')}">
- <div class="two"><div><label>색</label>${sel('f_color',Object.keys(COLORS),d.color)}</div><div><label>핏</label>${sel('f_fit',Object.keys(FITS),d.fit)}</div>
- <div><label>두께감</label>${sel('f_thick',THICK,d.thick)}</div><div><label>기장</label>${sel('f_len',LEN,d.len)}</div><div><label>허리</label>${sel('f_waist',WAIST,d.waist)}</div></div><label>착용감</label><div class="rate" id="f_feel">${[1,2,3,4,5].map(n=>`<button data-v="${n}" class="${n===d.feel?'on':''}">${n}</button>`).join('')}</div><div class="rl"><span>불편함</span><span>편함</span></div><label>핏 (예쁜 정도)</label><div class="rate" id="f_look">${[1,2,3,4,5].map(n=>`<button data-v="${n}" class="${n===d.look?'on':''}">${n}</button>`).join('')}</div><div class="rl"><span>별로</span><span>예쁨</span></div>
- <label>메모 (배/골반 핏, 장단점 등 — 메모앱에서 붙여넣기)</label><textarea id="f_memo">${(d.memo||'').replace(/</g,'&lt;')}</textarea>
+ <div class="two"><div><label>색</label>${sel('f_color',Object.keys(T.colors),d.color)}</div><div><label>${k0==='pants'?'핏':'종류'}</label>${sel('f_fit',Object.keys(T.fits),d.fit)}</div>
+ <div><label>두께감</label>${sel('f_thick',THICK,d.thick)}</div><div><label>기장</label>${sel('f_len',LEN,d.len)}</div>
+ ${k0==='pants'?`<div><label>허리</label>${sel('f_waist',WAIST,d.waist)}</div>`:''}<div><label>사이즈</label>${sel('f_size',SIZES,d.size||'-')}</div><div><label>수납</label>${sel('f_store',STORE,d.store||'접기')}</div></div>
+ <label>착용감</label>${rate('f_feel',d.feel)}<div class="rl"><span>불편함</span><span>편함</span></div>
+ <label>핏 (예쁜 정도)</label>${rate('f_look',d.look)}<div class="rl"><span>별로</span><span>예쁨</span></div>
+ <label>계절</label><div class="rate" id="f_se">${SEAS.map(s=>`<button data-s="${s}" class="${d.season.includes(s)?'on':''}">${s}</button>`).join('')}</div>
+ <label>메모 (장단점 등 — 메모앱에서 붙여넣기)</label><textarea id="f_memo">${(d.memo||'').replace(/</g,'&lt;')}</textarea>
  <div class="bar" style="margin-top:12px"><button class="btn" id="sv">저장</button><button class="btn g" id="cl">취소</button></div>`);
  document.querySelectorAll('#s1 .slot').forEach(s=>s.onclick=()=>{
   $('pick').onchange=e=>{const f=e.target.files[0];e.target.value='';if(f)cropper(f,url=>{d[s.dataset.k]=url;s.innerHTML=`<img src="${url}">`})};$('pick').click()});
- $('f_look').onclick=e=>{const v=+e.target.dataset.v;if(v){d.look=v;[...$('f_look').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}};
- $('f_feel').onclick=e=>{const v=+e.target.dataset.v;if(v){d.feel=v;[...$('f_feel').children].forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}};
+ const bind=(id,k)=>$(id).onclick=e=>{const v=+e.target.dataset.v;if(v){d[k]=v;[...$(id).children].forEach(b=>b.classList.toggle('on',+b.dataset.v===v))}};
+ bind('f_feel','feel');bind('f_look','look');
+ $('f_se').onclick=e=>{const s=e.target.dataset.s;if(!s)return;d.season=d.season.includes(s)?d.season.filter(x=>x!==s):[...d.season,s];e.target.classList.toggle('on')};
  $('cl').onclick=()=>hide('m1');
  $('sv').onclick=()=>{
-  d.name=$('f_name').value.trim();d.color=$('f_color').value;d.fit=$('f_fit').value;d.thick=$('f_thick').value;d.len=$('f_len').value;d.waist=$('f_waist').value;d.memo=$('f_memo').value;
-  if(!old||old.color!==d.color||old.fit!==d.fit)d.code=nextCode(d.color,d.fit,d.id);
+  d.name=$('f_name').value.trim();d.color=$('f_color').value;d.fit=$('f_fit').value;d.thick=$('f_thick').value;d.len=$('f_len').value;if(k0==='pants')d.waist=$('f_waist').value;d.size=$('f_size').value;d.store=$('f_store').value;d.memo=$('f_memo').value;
+  if(!old||old.color!==d.color||old.fit!==d.fit)d.code=nextCode(k0,d.color,d.fit,d.id);
   const ix=items.findIndex(x=>x.id===d.id);ix>=0?items[ix]=d:items.push(d);put(d);hide('m1');render();
  };
 }
 $('add').onclick=()=>form();
+$('grp').onclick=()=>{grp=grp==='color'?'fit':'color';flt='전체';$('grp').textContent='보기: '+(grp==='color'?'색상별':'종류별');render()};
+$('fb').onclick=()=>{$('fp').hidden=!$('fp').hidden};
+const ops=a=>a.map(([v,t])=>`<option value="${v}">${t}</option>`).join('');
+const sc=[['0','전체'],['3','3점 이상'],['4','4점 이상'],['5','5점만']];
+$('fw').innerHTML=ops([['','전체'],...WAIST.map(x=>[x,x])]);$('fl').innerHTML=ops(sc);$('ff').innerHTML=ops(sc);
+$('fs').innerHTML=ops([['','전체'],...STORE.map(x=>[x,x])]);$('fse').innerHTML=ops([['','전체'],...SEAS.map(x=>[x,x])]);
+$('fso').innerHTML=ops([['code','코드순'],['look','핏 예쁜 순'],['feel','착용감 좋은 순'],['old','오래 안 입은 순'],['many','많이 입은 순']]);
+function readF(){F={q:$('fq').value.trim().toLowerCase(),waist:$('fw').value,look:+$('fl').value,feel:+$('ff').value,store:$('fs').value,season:$('fse').value};so=$('fso').value;render()}
+['input','change'].forEach(ev=>$('fp').addEventListener(ev,readF));
+$('fr').onclick=()=>{$('fq').value='';['fw','fs','fse'].forEach(i=>$(i).value='');['fl','ff'].forEach(i=>$(i).value='0');$('fso').value='code';readF()};
 
 function cropper(file,done){
  const im=new Image();im.onload=()=>{
@@ -129,7 +170,7 @@ function cropper(file,done){
   cv.onpointermove=e=>{if(!st)return;const p=pt(e);r={x:Math.min(st.x,p.x),y:Math.min(st.y,p.y),w:Math.abs(p.x-st.x),h:Math.abs(p.y-st.y)};draw()};
   cv.onpointerup=()=>{st=null};
   draw();
-  function out(rr){const k=Math.min(1,900/Math.max(rr.w,rr.h)*sc*0+900/Math.max(rr.w/sc,rr.h/sc));const sw=rr.w/sc,sh=rr.h/sc,o=document.createElement('canvas');const kk=Math.min(1,900/Math.max(sw,sh));o.width=sw*kk;o.height=sh*kk;o.getContext('2d').drawImage(im,rr.x/sc,rr.y/sc,sw,sh,0,0,o.width,o.height);done(o.toDataURL('image/jpeg',.85));hide('m2')}
+  function out(rr){const sw=rr.w/sc,sh=rr.h/sc,o=document.createElement('canvas'),kk=Math.min(1,900/Math.max(sw,sh));o.width=sw*kk;o.height=sh*kk;o.getContext('2d').drawImage(im,rr.x/sc,rr.y/sc,sw,sh,0,0,o.width,o.height);done(o.toDataURL('image/jpeg',.85));hide('m2')}
   $('ok').onclick=()=>r.w>20&&r.h>20?out(r):out({x:0,y:0,w:W,h:H});
   $('full').onclick=()=>out({x:0,y:0,w:W,h:H});
   $('no').onclick=()=>hide('m2');
@@ -138,6 +179,6 @@ function cropper(file,done){
 $('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(items)],{type:'application/json'}));a.download='closet-backup.json';a.click()};
 $('imp').onclick=()=>$('impf').click();
 $('impf').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const a=JSON.parse(await f.text());a.forEach(o=>{const ix=items.findIndex(x=>x.id===o.id);ix>=0?items[ix]=o:items.push(o);put(o)});render()}catch(err){alert('파일을 읽지 못했어요')}};
-['m1','m3'].forEach(m=>$(m).onclick=e=>{if(e.target.id===m&&m==='m3')hide(m)});
-open().then(loadAll).then(a=>{items=a;render()});
+try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+open().then(loadAll).then(a=>{items=a;readF()});
 </script></body></html>
